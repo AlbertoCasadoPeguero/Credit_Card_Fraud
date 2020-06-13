@@ -1,7 +1,6 @@
 #Importando las librerias
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import tensorflow as tf
 
 #Importando el dataset
@@ -12,15 +11,15 @@ dataset.isnull().sum()
 dataset.info()
 estadisticas = dataset.describe()
 
+#Haciendo un poco de analysis
+import seaborn as sns
+
 #La data esta totalmente desbalanceada
 sns.countplot('Class',data = dataset)
 
 #Verificando la distribucion
 sns.distplot(dataset['Time'])
 sns.distplot(dataset['Amount'])
-
-dataset['Amount'].min()
-dataset['Amount'].max()
 
 #Analizando los montos de acuerdo a su clase
 fraudes = dataset[dataset['Class'] == 1]['Amount']
@@ -30,3 +29,13 @@ sns.distplot(no_fraudes)
 
 sns.scatterplot(range(0,len(fraudes)),fraudes)
 sns.scatterplot(range(0,len(no_fraudes)),no_fraudes)
+
+#Escalar la data
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler
+
+transformer = ColumnTransformer(transformers = [('scalador',StandardScaler(),['Time','Amount'])],
+                                remainder = 'passthrough')
+dataset = transformer.fit_transform(dataset)
+
+#TODO - split the data
